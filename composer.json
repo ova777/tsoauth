@@ -1,5 +1,4 @@
 {
-  	"version": "1.0.0",
     "name": "ova777/tsoauth",
     "description": "Tronsalt OAuth library",
     "homepage": "http://github.com/ova777/tsoauth",
@@ -13,7 +12,6 @@
             "homepage": "http://tronsalt.ru"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3",
         "ext-curl": "*",
