@@ -1,0 +1,26 @@
+{
+    "name": "ova777/tsoauth",
+    "description": "Tronsalt OAuth library",
+    "homepage": "http://github.com/ova777/tsoauth",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["oauth", "tronsalt"],
+    "authors": [
+        {
+            "name": "Vyacheslav Ovchinnikov",
+            "email": "ova.nsk@gmail.com",
+            "homepage": "http://tronsalt.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ova777\\TSOAuth\\": "src/"
+        }
+    }
+}
