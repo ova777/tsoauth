@@ -199,10 +199,14 @@ class Core {
 	}
 
 	/**
-	 * Редирект на oauth-авторизацию приложения у пользователя
+	 * Редирект на oauth-авторизацию (или возвращает url) приложения у пользователя
+	 * @param bool $returnUrl
+	 * @return bool|string
 	 */
-	public function goAuthorizationCode() {
-		header('Location: '.$this->getUrl('authorization_code'));
+	public function goAuthorizationCode($returnUrl = false) {
+		$url = $this->getUrl('authorization_code');
+		if($returnUrl) return $url;
+		header('Location: '.$url);
 	}
 
 	/**
