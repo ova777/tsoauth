@@ -58,14 +58,14 @@ class Core {
 
 	/**
 	 * GET запрос в АПИ
-	 * @param string $url
+	 * @param string $path
 	 * @return mixed
 	 * @throws Except
 	 */
-	public function apiGet($url) {
+	public function apiGet($path) {
 		$pthis = $this;
-		$url = $this->makeApiUrl($url);
-		return $this->autoRefreshToken(function() use ($pthis, $url){
+		return $this->autoRefreshToken(function() use ($pthis, $path){
+			$url = $pthis->callMethod('makeApiUrl', $path);
 			$req = Request::go($url, 'GET');
 			$pthis::callStatic('checkApiError', array($req));
 			return $pthis::callStatic('parseJSON', array($req->getJSON()));
@@ -80,10 +80,10 @@ class Core {
 	 * @throws Except
 	 */
 	public function apiPost($url, $data = array()) {
-		if(!isset($data['access_token'])) $data['access_token'] = $this->config['access_token'];
 		$pthis = $this;
 		$url = $this->makeApiUrl($url, false);
 		return $this->autoRefreshToken(function() use ($pthis, $url, $data){
+			$data['access_token'] = $pthis->access_token;
 			$req = Request::go($url, 'POST', $data);
 			$pthis::callStatic('checkApiError', array($req));
 			return $pthis::callStatic('parseJSON', array($req->getJSON()));
@@ -92,15 +92,15 @@ class Core {
 
 	/**
 	 * PUT запрос в АПИ
-	 * @param string $url
+	 * @param string $path
 	 * @param array $data
 	 * @return mixed
 	 * @throws Except
 	 */
-	public function apiPut($url, $data = array()) {
+	public function apiPut($path, $data = array()) {
 		$pthis = $this;
-		$url = $this->makeApiUrl($url);
-		return $this->autoRefreshToken(function() use ($pthis, $url, $data){
+		return $this->autoRefreshToken(function() use ($pthis, $path, $data){
+			$url = $pthis->callMethod('makeApiUrl', $path);
 			$req = Request::go($url, 'PUT', $data);
 			$pthis::callStatic('checkApiError', array($req));
 			return $pthis::callStatic('parseJSON', array($req->getJSON()));
@@ -109,15 +109,15 @@ class Core {
 
 	/**
 	 * DELETE запрос в АПИ
-	 * @param string $url
+	 * @param string $path
 	 * @param array $data
 	 * @return mixed
 	 * @throws Except
 	 */
-	public function apiDelete($url, $data = array()) {
+	public function apiDelete($path, $data = array()) {
 		$pthis = $this;
-		$url = $this->makeApiUrl($url);
-		return $this->autoRefreshToken(function() use ($pthis, $url, $data){
+		return $this->autoRefreshToken(function() use ($pthis, $path, $data){
+			$url = $pthis->callMethod('makeApiUrl', $path);
 			$req = Request::go($url, 'DELETE', $data);
 			$pthis::callStatic('checkApiError', array($req));
 			return $pthis::callStatic('parseJSON', array($req->getJSON()));
@@ -255,6 +255,10 @@ class Core {
 	 * @throws Except
 	 */
 	private static function checkApiError(Request $req) {
+		$json = $req->getJSON();
+		if($json && isset($json['error']) && isset($json['error_description'])) {
+			throw new Except($json['error_description'], $json['error'], Except::TYPE_OAUTH);
+		}
 		if($req->httpCode >= 400) throw new Except($req->httpStatus, $req->httpCode, Except::TYPE_API);
 	}
 
